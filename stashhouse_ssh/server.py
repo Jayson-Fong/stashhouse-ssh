@@ -93,6 +93,8 @@ class _SFTPServer(asyncssh.SFTPServer):
         creating = (pflags & os.O_CREAT) != 0
 
         if writing or creating:
+            logger.debug("Received write request: %s", path)
+
             mapped_path = self.map_path(path)
             if os.path.exists(mapped_path):
                 return super().open(path, pflags, attrs)
@@ -114,11 +116,14 @@ class SSHServer:
         host_key: SSH host key.
     """
 
+    # pylint: disable=too-many-arguments,too-many-positional-arguments
     def __init__(
         self,
         server_options: "server.ServerOptions",
         exited: multiprocessing.Event,
         port: int = 22,
+        host_key_file: str | None = None,
+        save_host_key: bool = True,
     ):
         """
         Initialize the SSH server.
@@ -127,13 +132,37 @@ class SSHServer:
             server_options: Server options applied globally.
             exited: Whether shutdown should be performed.
             port: Port to listen on.
+            host_key_file: File path to load the host key from.
+            save_host_key: If the host key file does not exist, whether to save one.
         """
 
         self.server_options = server_options
         self.exited = exited
         self.port = port
 
-        self.host_key = asyncssh.generate_private_key("ssh-rsa")
+        if host_key_file:
+            self.host_key = host_key_file
+            self._check_host_key(save_host_key)
+        else:
+            self.host_key = asyncssh.generate_private_key("ssh-rsa")
+
+    def _check_host_key(self, save_host_key: bool = True) -> None:
+        """
+        Check if the host key is valid and generate one if needed
+
+        If a host key file path is set but the file does not exist,
+        generates a new SSH-RSA key and saves it at the specified path
+
+        :param save_host_key: Whether to save the host key to the specified file
+        """
+        if isinstance(self.host_key, str) and not os.path.isfile(self.host_key):
+            if not save_host_key:
+                raise RuntimeError(
+                    f"The specified host key file does not exist, "
+                    f"but host key saving is disabled: {self.host_key}"
+                )
+
+            asyncssh.generate_private_key("ssh-rsa").write_private_key(self.host_key)
 
     async def _run(self) -> None:
         """
@@ -154,9 +183,13 @@ class SSHServer:
             ),
         )
 
+        for address, port in ssh_server.get_addresses():
+            logger.info("Started SSH server on %s:%d", address, port)
+
         while not self.exited.is_set():
             await asyncio.sleep(1.0)
 
+        logger.info("Stopping server")
         ssh_server.close()
         await ssh_server.wait_closed()
 
