@@ -62,3 +62,6 @@ class SSHServerStreamSession(asyncssh.stream.SSHServerStreamSession):
         if inspect.isawaitable(handler):
             assert self._conn is not None
             self._conn.create_task(handler, stdin.logger)
+
+
+__all__ = ("SSHServerStreamSession",)

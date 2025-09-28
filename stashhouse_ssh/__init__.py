@@ -75,3 +75,6 @@ def parse_arguments(plugin_name: str, args: argparse.Namespace) -> dict[str, Any
         "host_key_file": getattr(args, f"{plugin_name}.host_key_file", None),
         "save_host_key": getattr(args, f"{plugin_name}.save_host_key", True),
     }
+
+
+__all__ = ("__version__", "register_arguments", "parse_arguments")

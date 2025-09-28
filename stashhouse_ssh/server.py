@@ -35,6 +35,7 @@ class _SSHServer(asyncssh.SSHServer):
     """
 
     def connection_made(self, conn) -> None:
+        # noinspection SpellCheckingInspection
         remote_host, remote_port = conn.get_extra_info("peername")
         logger.info("Connection received from %s:%s", remote_host, remote_port)
 

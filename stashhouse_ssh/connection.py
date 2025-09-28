@@ -46,7 +46,7 @@ class SSHServerConnection(asyncssh.connection.SSHServerConnection):
     """
 
     def _process_session_open(
-        self, packet: asyncssh.packet.SSHPacket
+            self, packet: asyncssh.packet.SSHPacket
     ) -> tuple[asyncssh.SSHServerChannel, asyncssh.SSHServerSession]:
         """Process an incoming session open request"""
 
@@ -71,23 +71,27 @@ class SSHServerConnection(asyncssh.connection.SSHServerConnection):
 # pylint: disable=too-many-locals,too-many-arguments
 @asyncssh.misc.async_context_manager
 async def listen(
-    host="",
-    port: asyncssh.misc.DefTuple[int] = (),
-    *,
-    tunnel: asyncssh.misc.DefTuple["asyncssh.connection._TunnelListener"] = (),
-    family: asyncssh.misc.DefTuple[int] = (),
-    flags: int = socket.AI_PASSIVE,
-    backlog: int = 100,
-    sock: socket.socket | None = None,
-    reuse_address: bool = False,
-    reuse_port: bool = False,
-    acceptor: "asyncssh.connection._AcceptHandler" = None,
-    error_handler: "asyncssh.connection._ErrorHandler" = None,
-    config: asyncssh.misc.DefTuple[asyncssh.config.ConfigPaths] = (),
-    options: asyncssh.SSHServerConnectionOptions | None = None,
-    **kwargs: object,
+        host="",
+        port: asyncssh.misc.DefTuple[int] = (),
+        *,
+        tunnel: asyncssh.misc.DefTuple["asyncssh.connection._TunnelListener"] = (),
+        family: asyncssh.misc.DefTuple[int] = (),
+        flags: int = socket.AI_PASSIVE,
+        backlog: int = 100,
+        sock: socket.socket | None = None,
+        reuse_address: bool = False,
+        reuse_port: bool = False,
+        acceptor: "asyncssh.connection._AcceptHandler" = None,
+        error_handler: "asyncssh.connection._ErrorHandler" = None,
+        config: asyncssh.misc.DefTuple[asyncssh.config.ConfigPaths] = (),
+        options: asyncssh.SSHServerConnectionOptions | None = None,
+        **kwargs: object,
 ) -> asyncssh.SSHAcceptor:
-    """Start an SSH server
+    # noinspection SpellCheckingInspection
+    # noinspection GramarInspection
+    # noinspection GrazieInspection
+    """
+    Start an SSH server
 
     This function is a coroutine that can be run to create an SSH server
     listening on the specified host and port. The return value is an
@@ -109,7 +113,7 @@ async def listen(
         A comma-separated list may also be specified to establish a
         tunnel through multiple hosts.
 
-            .. note:: When specifying tunnel as a string, any config
+            .. Note:: When specifying tunnel as a string, any config
                       options in the call will apply only when opening
                       a connection to the final destination host and
                       port. However, settings to use when opening
@@ -131,7 +135,7 @@ async def listen(
         a new socket. When this is specified, host and port should not
         be specified.
     :param reuse_address: (optional)
-        Whether or not to reuse a local socket in the TIME_WAIT state
+        Whether to reuse a local socket in the TIME_WAIT state
         without waiting for its natural timeout to expire. If not
         specified, this will be automatically set to `True` on UNIX.
     :param reuse_port: (optional)
@@ -177,7 +181,7 @@ async def listen(
     :type options: :class:`SSHServerConnectionOptions`
 
     :returns: :class:`SSHAcceptor`
-    """  # noqa
+    """
 
     loop = asyncio.get_event_loop()
 
@@ -205,3 +209,6 @@ async def listen(
         ),
         timeout=new_options.connect_timeout,
     )
+
+
+__all__ = ("SSHServerConnection", "listen")

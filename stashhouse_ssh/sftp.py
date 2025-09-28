@@ -19,11 +19,13 @@
 #
 # Contributors:
 #     Ron Frederick - initial implementation, API, and documentation
-#     Jonathan Slenders - proposed changes to allow SFTP server callbacks
+#     Jonathan Slenders - proposed changes to allow SFTP server callbacks # noqa
 #                         to be coroutines
 #     Jayson Fong - packet handler minimization
 #
 # Additional original contributions in this file:
+#
+# Copyright (c) 2025 Jayson Fong
 #
 # The `SFTPServerHandler` and `SFTPServer` subclasses defined here are
 # original works and are provided under the terms of the MIT License
@@ -43,7 +45,6 @@ import uuid
 from typing import Awaitable
 
 import asyncssh.sftp
-
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +71,29 @@ class SFTPServerHandler(asyncssh.sftp.SFTPServerHandler):
         )
     }
 
+    # noinspection PyUnusedLocal
+    async def _do_nothing(self, *args, **kwargs) -> None:
+        """
+        Does nothing.
+
+        Accepts arbitrary arguments and keyword arguments and does nothing
+        else. This method exists to allow for processing packet types that
+        we choose not to handle, but if fully omitted, may pose issue to
+        certain clients.
+
+        Args:
+            *args: Accepts arbitrary arguments and does nothing with them.
+            **kwargs: Accepts arbitrary keyword arguments and does nothing with them.
+        """
+        del args, kwargs
+
+    # The SCP client often tries to execute an FSETSTAT operation, and # noqa
+    # may raise an error despite successful write operations. This
+    # serves to suppress raising an exception for the lack of a
+    # packet handler to make the client believe it worked, whereas
+    # we largely ignored their FSETSTAT command. # noqa
+    _packet_handlers[asyncssh.sftp.FXP_FSETSTAT] = _do_nothing
+
 
 class SFTPServer(asyncssh.SFTPServer):
     """
@@ -91,9 +115,11 @@ class SFTPServer(asyncssh.SFTPServer):
         self.directory = os.path.join(directory, str(uuid.uuid4()))
         super().__init__(chan, chroot=self.directory.encode())
 
+    # noinspection SpellCheckingInspection
     def open(
-        self, path: bytes, pflags: int, attrs: asyncssh.SFTPAttrs
+            self, path: bytes, pflags: int, attrs: asyncssh.SFTPAttrs
     ) -> asyncssh.misc.MaybeAwait[object]:
+        # noinspection SpellCheckingInspection
         """
         Open a file to serve a remote client.
 
@@ -110,7 +136,7 @@ class SFTPServer(asyncssh.SFTPServer):
         """
 
         writing = (
-            (pflags & os.O_WRONLY) or (pflags & os.O_RDWR) or (pflags & os.O_APPEND)
+                (pflags & os.O_WRONLY) or (pflags & os.O_RDWR) or (pflags & os.O_APPEND)
         )
         creating = (pflags & os.O_CREAT) != 0
 
@@ -127,10 +153,10 @@ class SFTPServer(asyncssh.SFTPServer):
 
 
 async def _sftp_handler(
-    sftp_server: "asyncssh.misc.MaybeAwait[asyncssh.SFTPServer]",
-    reader: "asyncssh.SSHReader[bytes]",
-    writer: "asyncssh.SSHWriter[bytes]",
-    sftp_version: int,
+        sftp_server: "asyncssh.misc.MaybeAwait[asyncssh.SFTPServer]",
+        reader: "asyncssh.SSHReader[bytes]",
+        writer: "asyncssh.SSHWriter[bytes]",
+        sftp_version: int,
 ) -> None:
     """Run an SFTP server to handle this request"""
 
@@ -143,12 +169,15 @@ async def _sftp_handler(
 
 
 def run_sftp_server(
-    sftp_server: "asyncssh.misc.MaybeAwait[asyncssh.SFTPServer]",
-    reader: "asyncssh.SSHReader[bytes]",
-    writer: "asyncssh.SSHWriter[bytes]",
-    sftp_version: int,
+        sftp_server: "asyncssh.misc.MaybeAwait[asyncssh.SFTPServer]",
+        reader: "asyncssh.SSHReader[bytes]",
+        writer: "asyncssh.SSHWriter[bytes]",
+        sftp_version: int,
 ) -> Awaitable[None]:
     """Return a handler for an SFTP server session"""
 
     reader.logger.info("Starting SFTP server")
     return _sftp_handler(sftp_server, reader, writer, sftp_version)
+
+
+__all__ = ("SFTPServerHandler", "SFTPServer", "run_sftp_server")
