@@ -13,7 +13,7 @@ copy protocol and secure file transfer protocol.
 import argparse
 from typing import Any
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 
 def register_arguments(plugin_name: str, parser: argparse.ArgumentParser) -> None:

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "stashhouse_ssh"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
     "asyncssh==2.21.0",
     "stashhouse>=0.0.3"
