@@ -1,3 +1,8 @@
+# Copyright (c) 2025 Jayson Fong
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 """
 Collection of files through secure shell-based protocols.
 
@@ -7,6 +12,8 @@ copy protocol and secure file transfer protocol.
 
 import argparse
 from typing import Any
+
+__version__ = "0.0.3"
 
 
 def register_arguments(plugin_name: str, parser: argparse.ArgumentParser) -> None:

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "stashhouse_ssh"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
     "asyncssh==2.21.0",
     "stashhouse>=0.0.3"
@@ -15,12 +15,14 @@ authors = [
 ]
 description = "StashHouse plugin for SCP and SFTP"
 readme = "README.md"
-license = "MIT"
+license = { text = "MIT AND (EPL-2.0 OR GPL-2.0-or-later)" }
 license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 1 - Planning",
     "Programming Language :: Python",
     "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Eclipse Public License 2.0 (EPL-2.0)",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.11",

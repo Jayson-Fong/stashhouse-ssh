@@ -1,3 +1,8 @@
+# Copyright (c) 2025 Jayson Fong
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 """
 SSH-based file transfer protocol implementations.
 
@@ -10,11 +15,13 @@ import functools
 import logging
 import multiprocessing
 import os
-import uuid
 from typing import TYPE_CHECKING
 
 import asyncssh
 import asyncssh.misc
+from asyncssh import SSHServerConnectionOptions
+
+from . import connection, __version__, sftp
 
 if TYPE_CHECKING:
     from stashhouse import server
@@ -47,61 +54,6 @@ class _SSHServer(asyncssh.SSHServer):
 
         del username
         return False
-
-
-class _SFTPServer(asyncssh.SFTPServer):
-    """
-    Secure File Transfer Protocol (SFTP) automatically creating directories.
-
-    SFTP typically requires that directories are already created before
-    placing files into them. This SFTP server implementation automatically
-    creates parent directories without requiring additional client interaction.
-    """
-
-    def __init__(self, chan, directory: str):
-        """
-        Initializes the SFTP server.
-
-        Args:
-            chan: SSH server channel.
-            directory: Directory to store files in.
-        """
-        self.directory = os.path.join(directory, str(uuid.uuid4()))
-        super().__init__(chan, chroot=self.directory.encode())
-
-    def open(
-        self, path: bytes, pflags: int, attrs: asyncssh.SFTPAttrs
-    ) -> asyncssh.misc.MaybeAwait[object]:
-        """
-        Open a file to serve a remote client.
-
-        Args:
-            path: Name of the fil to open.
-            pflags: Access mode of the file to open.
-            attrs: SFTP attributes.
-
-        Returns:
-            An object to access the file.
-
-        Raises:
-            asyncssh.sftp.SFTPError to return an error to the client.
-        """
-
-        writing = (
-            (pflags & os.O_WRONLY) or (pflags & os.O_RDWR) or (pflags & os.O_APPEND)
-        )
-        creating = (pflags & os.O_CREAT) != 0
-
-        if writing or creating:
-            logger.debug("Received write request: %s", path)
-
-            mapped_path = self.map_path(path)
-            if os.path.exists(mapped_path):
-                return super().open(path, pflags, attrs)
-
-            os.makedirs(os.path.dirname(mapped_path), exist_ok=True)
-
-        return super().open(path, pflags, attrs)
 
 
 # pylint: disable=too-few-public-methods
@@ -172,14 +124,17 @@ class SSHServer:
         to determine whether the server should stop.
         """
 
-        ssh_server = await asyncssh.listen(
+        ssh_server = await connection.listen(
             self.server_options.host,
             self.port,
             allow_scp=True,
             server_host_keys=[self.host_key],
             server_factory=_SSHServer,
             sftp_factory=functools.partial(
-                _SFTPServer, directory=self.server_options.directory
+                sftp.SFTPServer, directory=self.server_options.directory
+            ),
+            options=SSHServerConnectionOptions(
+                server_version=f"StashHouseSSH_{__version__}"
             ),
         )
 
