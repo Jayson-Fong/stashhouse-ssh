@@ -46,7 +46,7 @@ class SSHServerConnection(asyncssh.connection.SSHServerConnection):
     """
 
     def _process_session_open(
-            self, packet: asyncssh.packet.SSHPacket
+        self, packet: asyncssh.packet.SSHPacket
     ) -> tuple[asyncssh.SSHServerChannel, asyncssh.SSHServerSession]:
         """Process an incoming session open request"""
 
@@ -71,21 +71,21 @@ class SSHServerConnection(asyncssh.connection.SSHServerConnection):
 # pylint: disable=too-many-locals,too-many-arguments
 @asyncssh.misc.async_context_manager
 async def listen(
-        host="",
-        port: asyncssh.misc.DefTuple[int] = (),
-        *,
-        tunnel: asyncssh.misc.DefTuple["asyncssh.connection._TunnelListener"] = (),
-        family: asyncssh.misc.DefTuple[int] = (),
-        flags: int = socket.AI_PASSIVE,
-        backlog: int = 100,
-        sock: socket.socket | None = None,
-        reuse_address: bool = False,
-        reuse_port: bool = False,
-        acceptor: "asyncssh.connection._AcceptHandler" = None,
-        error_handler: "asyncssh.connection._ErrorHandler" = None,
-        config: asyncssh.misc.DefTuple[asyncssh.config.ConfigPaths] = (),
-        options: asyncssh.SSHServerConnectionOptions | None = None,
-        **kwargs: object,
+    host="",
+    port: asyncssh.misc.DefTuple[int] = (),
+    *,
+    tunnel: asyncssh.misc.DefTuple["asyncssh.connection._TunnelListener"] = (),
+    family: asyncssh.misc.DefTuple[int] = (),
+    flags: int = socket.AI_PASSIVE,
+    backlog: int = 100,
+    sock: socket.socket | None = None,
+    reuse_address: bool = False,
+    reuse_port: bool = False,
+    acceptor: "asyncssh.connection._AcceptHandler" = None,
+    error_handler: "asyncssh.connection._ErrorHandler" = None,
+    config: asyncssh.misc.DefTuple[asyncssh.config.ConfigPaths] = (),
+    options: asyncssh.SSHServerConnectionOptions | None = None,
+    **kwargs: object,
 ) -> asyncssh.SSHAcceptor:
     # noinspection SpellCheckingInspection
     # noinspection GramarInspection

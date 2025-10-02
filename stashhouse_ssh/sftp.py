@@ -117,7 +117,7 @@ class SFTPServer(asyncssh.SFTPServer):
 
     # noinspection SpellCheckingInspection
     def open(
-            self, path: bytes, pflags: int, attrs: asyncssh.SFTPAttrs
+        self, path: bytes, pflags: int, attrs: asyncssh.SFTPAttrs
     ) -> asyncssh.misc.MaybeAwait[object]:
         # noinspection SpellCheckingInspection
         """
@@ -136,7 +136,7 @@ class SFTPServer(asyncssh.SFTPServer):
         """
 
         writing = (
-                (pflags & os.O_WRONLY) or (pflags & os.O_RDWR) or (pflags & os.O_APPEND)
+            (pflags & os.O_WRONLY) or (pflags & os.O_RDWR) or (pflags & os.O_APPEND)
         )
         creating = (pflags & os.O_CREAT) != 0
 
@@ -153,10 +153,10 @@ class SFTPServer(asyncssh.SFTPServer):
 
 
 async def _sftp_handler(
-        sftp_server: "asyncssh.misc.MaybeAwait[asyncssh.SFTPServer]",
-        reader: "asyncssh.SSHReader[bytes]",
-        writer: "asyncssh.SSHWriter[bytes]",
-        sftp_version: int,
+    sftp_server: "asyncssh.misc.MaybeAwait[asyncssh.SFTPServer]",
+    reader: "asyncssh.SSHReader[bytes]",
+    writer: "asyncssh.SSHWriter[bytes]",
+    sftp_version: int,
 ) -> None:
     """Run an SFTP server to handle this request"""
 
@@ -169,10 +169,10 @@ async def _sftp_handler(
 
 
 def run_sftp_server(
-        sftp_server: "asyncssh.misc.MaybeAwait[asyncssh.SFTPServer]",
-        reader: "asyncssh.SSHReader[bytes]",
-        writer: "asyncssh.SSHWriter[bytes]",
-        sftp_version: int,
+    sftp_server: "asyncssh.misc.MaybeAwait[asyncssh.SFTPServer]",
+    reader: "asyncssh.SSHReader[bytes]",
+    writer: "asyncssh.SSHWriter[bytes]",
+    sftp_version: int,
 ) -> Awaitable[None]:
     """Return a handler for an SFTP server session"""
 

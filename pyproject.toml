@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "stashhouse_ssh"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
     "asyncssh==2.21.0",
     "stashhouse>=0.0.3"
@@ -34,11 +34,5 @@ classifiers = [
 Homepage = "https://github.com/Jayson-Fong/stashhouse_ssh"
 Issues = "https://github.com/Jayson-Fong/stashhouse_ssh/issues"
 
-[project.entry-points.'stashhouse.plugins.server']
-ssh = "stashhouse_ssh.server:SSHServer"
-
-[project.entry-points.'stashhouse.plugins.cli.register']
-ssh = "stashhouse_ssh:register_arguments"
-
-[project.entry-points.'stashhouse.plugins.cli.parse']
-ssh = "stashhouse_ssh:parse_arguments"
+[project.entry-points.'stashhouse.plugin']
+ssh = "stashhouse_ssh:SSHServer"
