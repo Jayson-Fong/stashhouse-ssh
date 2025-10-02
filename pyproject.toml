@@ -7,7 +7,7 @@ name = "stashhouse_ssh"
 version = "0.0.5"
 dependencies = [
     "asyncssh==2.21.0",
-    "stashhouse>=0.0.3"
+    "stashhouse>=0.0.4"
 ]
 requires-python = ">=3.11"
 authors = [
