@@ -1,3 +1,4 @@
+<!--suppress HtmlDeprecatedAttribute-->
 <div align="center">
    <h1>🖥️ StashHouse: SSH Plugin</h1>
 </div>
@@ -23,8 +24,8 @@ Registers a plugin named `ssh` and provides a `--ssh.port` argument to configure
 
 This package is a plugin for [StashHouse](https://pypi.org/project/stashhouse/). To install the program:
 
-```console
-python3 -m pip install stashhouse[ssh]
+```shell
+python3 -m pip install 'stashhouse[ssh]'
 ```
 
 The following command-line arguments are available:
